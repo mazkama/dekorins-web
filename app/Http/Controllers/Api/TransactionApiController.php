@@ -9,6 +9,33 @@ use Illuminate\Http\Request;
 
 class TransactionApiController extends Controller
 {
+    public function index(Request $request)
+    {
+        $transactions = Transaction::with(['payment', 'dekorin', 'dekorin.category'])
+            ->where('user_id', $request->user()->id)
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar transaksi user',
+            'data'    => $transactions
+        ]);
+    }
+
+    public function show(Request $request, $id)
+    {
+        $transaction = Transaction::with(['payment', 'dekorin', 'dekorin.category'])
+            ->where('user_id', $request->user()->id)
+            ->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Detail transaksi',
+            'data'    => $transaction
+        ]);
+    }
+
     public function store(Request $request)
     {
         $request->validate([

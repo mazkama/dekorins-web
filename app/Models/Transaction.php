@@ -21,8 +21,14 @@ class Transaction extends Model
     {
         return $this->belongsTo(User::class);
     }
+
     public function dekorin()
-{
-    return $this->belongsTo(Dekorin::class);
-}
+    {
+        return $this->belongsTo(Dekorin::class);
+    }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class);
+    }
 }

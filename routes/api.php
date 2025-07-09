@@ -19,6 +19,8 @@
         Route::get('/dekorins', [DekorinController::class, 'index']);
         Route::get('/dekorins/{id}', [DekorinController::class, 'show']);
 
+        Route::get('/transactions', [TransactionApiController::class, 'index']);
+        Route::get('/transactions/{id}', [TransactionApiController::class, 'show']);
         Route::post('/transactions', [TransactionApiController::class, 'store']);
         Route::post('/transactions/{id}/pay', [TransactionApiController::class, 'pay']);
         Route::get('/categories', [CategoryController::class, 'index']);
