@@ -14,11 +14,11 @@
         @endif
 
         <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-300">
-            <table id="datatable" class="w-full text-sm text-center border border-gray-300 rounded-lg overflow-hidden">
-                <thead class="bg-gray-100 text-gray-700">
+            <table id="datatable" class="w-full text-sm border border-gray-300 rounded-lg overflow-hidden">
+                <thead class="bg-gray-100 text-gray-700 ">
                     <tr>
                         <th class="px-4 py-3 font-semibold border-b">No</th>
-                        <th class="px-4 py-3 font-semibold border-b">Buku</th>
+                        <th class="px-4 py-3 font-semibold border-b">Dekorin</th>
                         <th class="px-4 py-3 font-semibold border-b">User</th>
                         <th class="px-4 py-3 font-semibold border-b">Keterangan</th>
                         <th class="px-4 py-3 font-semibold border-b">Status</th>
@@ -30,16 +30,18 @@
                     @foreach ($transactions as $trx)
                         <tr class="hover:bg-gray-50 transition duration-200">
                             <td class="px-4 py-2">{{ $loop->iteration }}</td>
-                            <td class="px-4 py-2">{{ $trx->book->title ?? '-' }}</td>
-                            <td class="px-4 py-2">{{ $trx->user->name }}</td>
+                            <td class="px-4 py-2">{{ $trx->dekorin->tema ?? '-' }}</td>
+                            <td class="px-4 py-2">{{ $trx->user->name ?? '-' }}</td>
                             <td class="px-4 py-2">{{ $trx->keterangan }}</td>
                             <td class="px-4 py-2">
-                                @if ($trx->status === 0)
+                                @if ($trx->status === 'pending')
                                     <span class="text-yellow-600 font-semibold">Pending</span>
-                                @elseif ($trx->status === 1)
-                                    <span class="text-green-600 font-semibold">Diterima</span>
-                                @else
+                                @elseif ($trx->status === 'approved')
+                                    <span class="text-green-600 font-semibold">Disetujui</span>
+                                @elseif ($trx->status === 'rejected')
                                     <span class="text-red-600 font-semibold">Ditolak</span>
+                                @else
+                                    <span class="text-gray-600 font-semibold">{{ ucfirst($trx->status) }}</span>
                                 @endif
                             </td>
                             <td class="px-4 py-2">Rp{{ number_format($trx->biaya, 0, ',', '.') }}</td>
