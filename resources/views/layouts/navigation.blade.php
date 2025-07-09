@@ -28,8 +28,8 @@
                         {{ __('Transaksi') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('transactions.approval')" :active="request()->routeIs('transactions.approval')">
-                        {{ __('Approval Saldo') }}
+                    <x-nav-link :href="route('payment-methods.index')" :active="request()->routeIs('transactions.approval')">
+                        {{ __('Metode Pembayaran') }}
                     </x-nav-link>
 
                     <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">

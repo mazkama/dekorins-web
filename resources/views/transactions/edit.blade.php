@@ -14,12 +14,12 @@
                     @method('PUT')
 
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700">Buku</label>
-                        <select name="book_id" class="form-select w-full mt-1">
-                            <option value="">-- Tidak ada buku --</option>
-                            @foreach ($books as $book)
-                                <option value="{{ $book->id }}" {{ $transaction->book_id == $book->id ? 'selected' : '' }}>
-                                    {{ $book->title }}
+                        <label class="block text-sm font-medium text-gray-700">Dekorin</label>
+                        <select name="dekorin_id" class="form-select w-full mt-1">
+                            <option value="">-- Pilih Dekorin --</option>
+                            @foreach ($dekorins as $dekorin)
+                                <option value="{{ $dekorin->id }}" {{ $transaction->dekorin_id == $dekorin->id ? 'selected' : '' }}>
+                                    {{ $dekorin->tema }}
                                 </option>
                             @endforeach
                         </select>
@@ -44,9 +44,10 @@
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700">Status</label>
                         <select name="status" class="form-select w-full mt-1">
-                            <option value="0" {{ $transaction->status == 0 ? 'selected' : '' }}>Pending</option>
-                            <option value="1" {{ $transaction->status == 1 ? 'selected' : '' }}>Diterima</option>
-                            <option value="2" {{ $transaction->status == 2 ? 'selected' : '' }}>Ditolak</option>
+                            <option value="pending" {{ $transaction->status == 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="approved" {{ $transaction->status == 'approved' ? 'selected' : '' }}>Disetujui</option>
+                            <option value="rejected" {{ $transaction->status == 'rejected' ? 'selected' : '' }}>Ditolak</option>
+                            <option value="paid" {{ $transaction->status == 'paid' ? 'selected' : '' }}>Dibayar</option>
                         </select>
                     </div>
 
@@ -60,6 +61,46 @@
                         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Update</button>
                     </div>
                 </form>
+
+                {{-- Tampilkan detail pembayaran jika ada --}}
+                @if($payment)
+                    <div class="mt-8 border-t pt-6">
+                        <h3 class="font-semibold text-lg mb-2">Detail Pembayaran</h3>
+                        <div class="mb-2">
+                            <span class="font-medium">Metode:</span>
+                            {{ $payment->paymentMethod->name ?? '-' }}
+                        </div>
+                        <div class="mb-2">
+                            <span class="font-medium">Jumlah:</span>
+                            Rp{{ number_format($payment->amount, 0, ',', '.') }}
+                        </div>
+                        <div class="mb-2">
+                            <span class="font-medium">Tanggal Bayar:</span>
+                            {{ $payment->paid_at ? \Carbon\Carbon::parse($payment->paid_at)->format('d-m-Y H:i') : '-' }}
+                        </div>
+                        <div class="mb-2">
+                            <span class="font-medium">Bukti Pembayaran:</span>
+                            @if($payment->payment_proof)
+                                <a href="{{ asset('storage/' . $payment->payment_proof) }}" target="_blank" class="text-blue-600 underline">Lihat Bukti</a>
+                            @else
+                                <span>-</span>
+                            @endif
+                        </div>
+                        <div class="flex gap-3 mt-4">
+                            @if($transaction->status !== 'approved')
+                                <form action="{{ route('transactions.approvePayment', $transaction->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mr-3">Approve</button>
+                                </form>
+                                <form action="{{ route('transactions.cancelPayment', $transaction->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Cancel</button>
+                                </form>
+                            @else
+                                <span class="text-green-700 font-semibold">Pembayaran sudah disetujui.</span>
+                            @endif
+                        </div> 
+                @endif
 
             </div>
         </div>

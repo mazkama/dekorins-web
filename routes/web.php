@@ -7,6 +7,7 @@ use App\Http\Controllers\DekorinController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TransactionApprovalController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\UserController;
 
 // Redirect root ke login
@@ -39,6 +40,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('transactions', TransactionController::class)->only([
         'index', 'edit', 'update', 'destroy'
     ]);
+    Route::post('/transactions/{id}/approve-payment', [TransactionController::class, 'approvePayment'])->name('transactions.approvePayment');
+    Route::post('/transactions/{id}/cancel-payment', [TransactionController::class, 'cancelPayment'])->name('transactions.cancelPayment');
+
+    Route::resource('payment-methods', PaymentMethodController::class);
 
     // Saldo Approval 
     Route::get('/saldo/approval', [TransactionApprovalController::class, 'index'])->name('transactions.approval');

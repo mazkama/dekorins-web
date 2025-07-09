@@ -65,7 +65,6 @@ class TransactionApiController extends Controller
             'payment_method_id' => 'required|exists:payment_methods,id',
             'amount'            => 'required|numeric',
             'payment_proof'     => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'paid_at'           => 'nullable|date',
         ]);
 
         $transaction = Transaction::findOrFail($transaction_id);
@@ -87,7 +86,7 @@ class TransactionApiController extends Controller
             'payment_method_id' => $request->payment_method_id,
             'amount'            => $request->amount,
             'payment_proof'     => $paymentProofPath,
-            'paid_at'           => $request->paid_at,
+            'paid_at'           => now(), // Ambil waktu sekarang
         ]);
 
         $transaction->update(['status' => 'paid']);

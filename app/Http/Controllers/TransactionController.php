@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use App\Models\Dekorin;
 use App\Models\User;
+use App\Models\Payment;
+use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 
 class TransactionController extends Controller
@@ -21,7 +23,10 @@ class TransactionController extends Controller
     {
         $dekorins = Dekorin::all();
         $users = User::all();
-        return view('transactions.edit', compact('transaction', 'dekorins', 'users'));
+        $payment = Payment::with('paymentMethod')->where('transaction_id', $transaction->id)->first();
+        $paymentMethods = PaymentMethod::all();
+
+        return view('transactions.edit', compact('transaction', 'dekorins', 'users', 'payment', 'paymentMethods'));
     }
 
     // Update transaksi
@@ -31,7 +36,7 @@ class TransactionController extends Controller
             'dekorin_id' => 'required|exists:dekorins,id',
             'user_id'    => 'required|exists:users,id',
             'keterangan' => 'required|string',
-            'status'     => 'required|string|in:pending,approved,rejected',
+            'status'     => 'required|string|in:pending,approved,rejected,paid',
             'biaya'      => 'required|numeric',
         ]);
 
@@ -40,6 +45,22 @@ class TransactionController extends Controller
         ]));
 
         return redirect()->route('transactions.index')->with('success', 'Transaksi berhasil diperbarui.');
+    }
+
+    // Approve pembayaran
+    public function approvePayment($transactionId)
+    {
+        $transaction = Transaction::findOrFail($transactionId);
+        $transaction->update(['status' => 'approved']);
+        return redirect()->back()->with('success', 'Pembayaran disetujui.');
+    }
+
+    // Cancel pembayaran
+    public function cancelPayment($transactionId)
+    {
+        $transaction = Transaction::findOrFail($transactionId);
+        $transaction->update(['status' => 'rejected']);
+        return redirect()->back()->with('success', 'Pembayaran ditolak.');
     }
 
     // Hapus transaksi
